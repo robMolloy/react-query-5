@@ -1,4 +1,4 @@
 export * from "./TodoListItem";
-export * from "./todoDb";
+export * from "./todoDbInterface";
 export * from "./useTodos";
 export * from "./todoSchemas";

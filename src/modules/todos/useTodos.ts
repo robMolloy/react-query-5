@@ -1,7 +1,7 @@
 import z from "zod";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { db } from "./todoDb";
+import { todoDbInterface } from "./todoDbInterface";
 import { initTodoSchema, todosSchema } from "./todoSchemas";
 
 export const useTodos = () => {
@@ -10,7 +10,7 @@ export const useTodos = () => {
   const { data: todos } = useQuery({
     queryKey: ["todos"],
     queryFn: async () => {
-      const parsedTodos = await db().fetchTodos();
+      const parsedTodos = await todoDbInterface().fetchTodos();
       return parsedTodos.success
         ? parsedTodos.data
         : ([] as z.infer<typeof todosSchema>);
@@ -19,7 +19,7 @@ export const useTodos = () => {
 
   const mutation = useMutation({
     mutationFn: async (todo: z.infer<typeof initTodoSchema>) => {
-      const parsedTodo = await db().addTodo(todo);
+      const parsedTodo = await todoDbInterface().addTodo(todo);
       if (parsedTodo.success) return parsedTodo.data;
     },
     onSuccess: (data) => {
