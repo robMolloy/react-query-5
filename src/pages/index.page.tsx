@@ -8,6 +8,7 @@ export const Index = () => {
   const { todos, addTodo, isAddTodoPending, pendingAddTodo } = useTodos();
 
   if (!todos) return <LoadingSpinner />;
+
   return (
     <>
       <button onClick={() => addTodo({ content: `todo ${getRandomNumber()}` })}>
@@ -20,6 +21,7 @@ export const Index = () => {
         {isAddTodoPending && (
           <div style={{ display: "flex" }}>
             <LoadingSpinner />
+
             <TodoListItem
               transparent
               title="pending"

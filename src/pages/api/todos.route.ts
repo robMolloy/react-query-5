@@ -19,10 +19,14 @@ const todos: Todos = [
   { id: "id2", content: "todo2" },
 ];
 
-const addTodoToDb = (initTodo: InitTodo) => {
-  const todo = { ...initTodo, id: `id${getRandomNumber(10)}` } as Todo;
+const addTodoToDb = (initTodo: InitTodo): Todo => {
+  const todo = { ...initTodo, id: `id${getRandomNumber(10)}` };
   todos.push(todo);
   return todo;
+};
+const safeAddTodoToDb = (payload: unknown): Todo | undefined => {
+  const parsedPayload = initTodoSchema.safeParse(payload);
+  if (parsedPayload.success) return addTodoToDb(parsedPayload.data);
 };
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -31,14 +35,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") return res.json(todos);
 
   if (req.method === "POST") {
-    const initTodo = JSON.parse(req.body);
-    const parsedInitTodo = initTodoSchema.safeParse(initTodo);
-    if (parsedInitTodo.success) {
-      const todo = addTodoToDb(parsedInitTodo.data);
-      return res.json(todo);
-    }
+    const payload = JSON.parse(req.body);
+    const todo = safeAddTodoToDb(payload);
+    return res.json(todo);
   }
 
-  return await delay(0, { shouldReject: true });
+  return await new Promise((_res, rej) => rej());
 };
 export default handler;
